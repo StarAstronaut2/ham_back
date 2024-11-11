@@ -19,6 +19,15 @@ const Task = sequelize.define('Task', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: User,
+          key: 'id'
+        }
+    },
 });
-
+Task.belongsTo(User);
+User.hasMany(Task);
 module.exports = Task;

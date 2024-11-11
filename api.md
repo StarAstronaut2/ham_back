@@ -1,188 +1,200 @@
+# 任务管理系统 API 文档
 
+## 基础信息
 
----
+- 基础URL: `http://localhost:3000`
+- 所有请求和响应均使用 JSON 格式
+- 需要认证的接口都需要在请求头中携带 token
+- 认证格式: `Authorization: Bearer <your-token>`
 
-## 接口文档 - 任务管理 API
+## 状态码说明
 
-**基础URL**: `http://localhost:3000/tasks`
+- 200: 请求成功
+- 201: 创建成功
+- 400: 请求参数错误
+- 401: 未认证或认证失败
+- 404: 资源未找到
+- 500: 服务器内部错误
+
+## 认证相关接口
+
+### 1. 用户注册
+
+**请求方法：** POST
+
+**URL：** `/auth/register`
+
+**请求参数：**
+
+```json
+{
+  "username": "string",     // 用户名，必填
+  "password": "string",     // 密码，必填
+  "email": "string"        // 邮箱，必填，需要符合邮箱格式
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@example.com",
+    "createdAt": "2024-11-11T10:00:00.000Z",
+    "updatedAt": "2024-11-11T10:00:00.000Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIs..." // JWT token
+}
+```
+
+### 2. 用户登录
+
+**请求方法：** POST
+
+**URL：** `/auth/login`
+
+**请求参数：**
+
+```json
+{
+  "username": "string",     // 用户名，必填
+  "password": "string"      // 密码，必填
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@example.com",
+    "createdAt": "2024-11-11T10:00:00.000Z",
+    "updatedAt": "2024-11-11T10:00:00.000Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIs..." // JWT token
+}
+```
+
+## 任务管理接口
+
+> 注意：以下所有接口都需要在请求头中携带 token
 
 ### 1. 获取所有任务
 
-- **URL**: `/tasks`
-- **方法**: `GET`
-- **描述**: 获取所有任务的列表。
+**请求方法：** GET
 
-#### 请求参数
-无
+**URL：** `/tasks`
 
-#### 响应示例
+**请求头：**
+```
+Authorization: Bearer <your-token>
+```
+
+**响应示例：**
 
 ```json
 [
   {
     "id": 1,
-    "content": "完成Express.js项目",
-    "deadline": "2023-12-31T23:59:59.000Z",
-    "finish": false,
-    "priority": 1,
-    "createdAt": "2023-11-01T10:30:00.000Z",
-    "updatedAt": "2023-11-01T10:30:00.000Z"
+    "content": "完成API文档",
+    "completed": false,
+    "userId": 1,
+    "createdAt": "2024-11-11T10:00:00.000Z",
+    "updatedAt": "2024-11-11T10:00:00.000Z"
   },
   {
     "id": 2,
-    "content": "复习数据库知识",
-    "deadline": "2023-11-15T23:59:59.000Z",
-    "finish": true,
-    "priority": 2,
-    "createdAt": "2023-11-02T15:45:00.000Z",
-    "updatedAt": "2023-11-02T15:45:00.000Z"
+    "content": "实现前端界面",
+    "completed": true,
+    "userId": 1,
+    "createdAt": "2024-11-11T11:00:00.000Z",
+    "updatedAt": "2024-11-11T11:00:00.000Z"
   }
 ]
 ```
 
----
+### 2. 创建新任务
 
-### 2. 获取特定任务
+**请求方法：** POST
 
-- **URL**: `/tasks/:id`
-- **方法**: `GET`
-- **描述**: 根据任务ID获取特定任务。
+**URL：** `/tasks`
 
-#### 路径参数
-- `id` (必填): 要获取的任务的ID。
+**请求头：**
+```
+Authorization: Bearer <your-token>
+```
 
-#### 响应示例
+**请求参数：**
+
+```json
+{
+  "content": "string",          // 任务内容，必填
+  "completed": boolean         // 任务状态，可选，默认false
+}
+```
+
+**响应示例：**
 
 ```json
 {
   "id": 1,
-  "content": "完成Express.js项目",
-  "deadline": "2023-12-31T23:59:59.000Z",
-  "finish": false,
-  "priority": 1,
-  "createdAt": "2023-11-01T10:30:00.000Z",
-  "updatedAt": "2023-11-01T10:30:00.000Z"
+  "content": "新任务内容",
+  "completed": false,
+  "userId": 1,
+  "createdAt": "2024-11-11T10:00:00.000Z",
+  "updatedAt": "2024-11-11T10:00:00.000Z"
 }
 ```
 
-#### 错误响应
+### 3. 更新任务
 
-- 如果任务ID不存在，返回404错误：
+**请求方法：** PUT
+
+**URL：** `/tasks/:id`
+
+**请求头：**
+```
+Authorization: Bearer <your-token>
+```
+
+**请求参数：**
 
 ```json
 {
-  "error": "任务未找到"
+  "content": "string",          // 任务内容，可选
+  "completed": boolean         // 任务状态，可选
 }
 ```
 
----
-
-### 3. 创建新任务
-
-- **URL**: `/tasks`
-- **方法**: `POST`
-- **描述**: 创建一个新任务。
-
-#### 请求体
-
-```json
-{
-  "content": "完成Express.js项目",
-  "deadline": "2023-12-31T23:59:59",
-  "finish": false,
-  "priority": 1
-}
-```
-
-- `content` (必填): 任务内容，字符串类型。
-- `deadline` (必填): 任务截止日期，ISO格式日期字符串。
-- `finish` (可选): 任务是否完成，布尔类型，默认为 `false`。
-- `priority` (必填): 任务优先级，整数类型。
-
-#### 响应示例
-
-```json
-{
-  "id": 3,
-  "content": "完成Express.js项目",
-  "deadline": "2023-12-31T23:59:59.000Z",
-  "finish": false,
-  "priority": 1,
-  "createdAt": "2023-11-04T12:00:00.000Z",
-  "updatedAt": "2023-11-04T12:00:00.000Z"
-}
-```
-
-#### 错误响应
-
-- 如果请求体中缺少必要字段或字段格式不正确，返回400错误：
-
-```json
-{
-  "error": "创建任务失败"
-}
-```
-
----
-
-### 4. 更新任务
-
-- **URL**: `/tasks/:id`
-- **方法**: `PUT`
-- **描述**: 根据任务ID更新任务。
-
-#### 路径参数
-- `id` (必填): 要更新的任务的ID。
-
-#### 请求体
-
-可以更新以下任意字段：
-
-```json
-{
-  "content": "复习数据库知识",
-  "deadline": "2023-11-15T23:59:59",
-  "finish": true,
-  "priority": 2
-}
-```
-
-#### 响应示例
+**响应示例：**
 
 ```json
 {
   "id": 1,
-  "content": "复习数据库知识",
-  "deadline": "2023-11-15T23:59:59.000Z",
-  "finish": true,
-  "priority": 2,
-  "createdAt": "2023-11-01T10:30:00.000Z",
-  "updatedAt": "2023-11-04T12:10:00.000Z"
+  "content": "更新后的任务内容",
+  "completed": true,
+  "userId": 1,
+  "createdAt": "2024-11-11T10:00:00.000Z",
+  "updatedAt": "2024-11-11T12:00:00.000Z"
 }
 ```
 
-#### 错误响应
+### 4. 删除特定任务
 
-- 如果任务ID不存在，返回404错误：
+**请求方法：** DELETE
 
-```json
-{
-  "error": "任务未找到"
-}
+**URL：** `/tasks/:id`
+
+**请求头：**
+```
+Authorization: Bearer <your-token>
 ```
 
----
-
-### 5. 删除任务
-
-- **URL**: `/tasks/:id`
-- **方法**: `DELETE`
-- **描述**: 根据任务ID删除任务。
-
-#### 路径参数
-- `id` (必填): 要删除的任务的ID。
-
-#### 响应示例
+**响应示例：**
 
 ```json
 {
@@ -190,21 +202,18 @@
 }
 ```
 
-#### 错误响应
+### 5. 删除所有任务
 
-- 如果任务ID不存在，返回404错误：
+**请求方法：** DELETE
 
-```json
-{
-  "error": "任务未找到"
-}
+**URL：** `/tasks`
+
+**请求头：**
 ```
----
-### 6. 测试删除所有任务的API
-- **URL**: `/tasks/`
-- **方法**: `DELETE`
-- **描述**: 删除所有任务。
-#### 响应示例
+Authorization: Bearer <your-token>
+```
+
+**响应示例：**
 
 ```json
 {
@@ -212,25 +221,51 @@
 }
 ```
 
+## 错误响应示例
 
----
+### 1. 认证失败
 
-### 错误码
+```json
+{
+  "error": "请先登录"
+}
+```
 
-- **200** - 请求成功
-- **201** - 创建成功
-- **400** - 请求错误，通常是请求体格式不正确或缺少必要字段
-- **404** - 资源未找到
-- **500** - 服务器内部错误
+### 2. 参数错误
 
----
+```json
+{
+  "error": "注册失败",
+  "details": "用户名已存在"
+}
+```
 
-### 备注
+### 3. 资源未找到
 
-- 所有请求和响应均为JSON格式。
-- 日期字段如 `deadline` 需要使用ISO格式的字符串（例如：`2023-12-31T23:59:59`）。
-- `priority` 为整数值，用于定义任务优先级。
+```json
+{
+  "error": "任务未找到"
+}
+```
 
----
+## 注意事项
 
-此文档提供了每个接口的完整信息，前端可以参考此文档进行请求的构建和响应的处理。如果有任何疑问，可以随时联系后端开发人员。
+1. token 的获取：
+   - 用户注册或登录成功后，会在响应中返回 token
+   - 后续请求需要将此 token 添加到请求头中
+
+2. 安全性：
+   - 所有包含敏感信息的请求都应使用 HTTPS
+   - 不要在客户端明文存储密码
+   - token 应安全存储，建议使用 localStorage 或 httpOnly cookie
+
+3. 错误处理：
+   - 确保处理所有可能的错误响应
+   - 网络错误需要适当的重试机制
+   - 401 错误可能意味着 token 过期，需要重新登录
+
+4. 最佳实践：
+   - 实现请求拦截器统一添加 token
+   - 实现响应拦截器统一处理错误
+   - 建议使用 axios 等成熟的 HTTP 客户端库
+
