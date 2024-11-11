@@ -16,68 +16,144 @@
 - 404: 资源未找到
 - 500: 服务器内部错误
 
-## 认证相关接口
 
-### 1. 用户注册
 
-**请求方法：** POST
 
-**URL：** `/auth/register`
+#### 0. 注册用户
+- **URL**: `/register`
+- **方法**: POST
+- **描述**: 创建新用户。
+- **请求体**:
+  - `username` (必填): 用户名。
+  - `password` (必填): 密码。
+  - `email` (可选): 电子邮箱。
+- **响应**:
+  - 成功:
+    - 状态码: 201
+    - 响应体:
+      ```json
+      {
+        "success": true,
+        "user": {
+          "id": "用户ID",
+          "username": "用户名",
+          "email": "邮箱"
+        },
+        "token": "JWT令牌"
+      }
+      ```
+  - 失败:
+    - 状态码: 400
+    - 响应体（缺少必填项）:
+      ```json
+      {
+        "error": "缺少必要信息",
+        "details": {
+          "username": "用户名是必填项",
+          "password": "密码是必填项"
+        }
+      }
+      ```
+    - 状态码: 400
+    - 响应体（唯一性约束失败）:
+      ```json
+      {
+        "error": "唯一性检查失败",
+        "details": {
+          "username": "该用户名已被注册",
+          "email": "该电子邮箱已被注册"
+        }
+      }
+      ```
+    - 状态码: 500
+    - 响应体（服务器错误）:
+      ```json
+      {
+        "error": "服务器内部错误",
+        "details": "注册过程中发生意外错误，请稍后重试"
+      }
+      ```
 
-**请求参数：**
+#### 1. 用户登录
+- **URL**: `/login`
+- **方法**: POST
+- **描述**: 用户登录并获取 JWT 令牌。
+- **请求体**:
+  - `username` (必填): 用户名。
+  - `password` (必填): 密码。
+- **响应**:
+  - 成功:
+    - 状态码: 200
+    - 响应体:
+      ```json
+      {
+        "user": {
+          // 用户信息
+        },
+        "token": "JWT令牌"
+      }
+      ```
+  - 失败:
+    - 状态码: 401
+    - 响应体:
+      ```json
+      {
+        "error": "用户名或密码错误"
+      }
+      ```
+    - 状态码: 500
+    - 响应体:
+      ```json
+      {
+        "error": "登录失败"
+      }
+      ```
 
-```json
-{
-  "username": "string",     // 用户名，必填
-  "password": "string",     // 密码，必填
-  "email": "string"        // 邮箱，必填，需要符合邮箱格式
-}
-```
+#### 2. 修改密码
+- **URL**: `/change-password`
+- **方法**: POST
+- **描述**: 用户修改密码，需要用户已登录。
+- **请求体**:
+  - `oldPassword` (必填): 旧密码。
+  - `newPassword` (必填): 新密码。
+- **响应**:
+  - 成功:
+    - 状态码: 200
+    - 响应体:
+      ```json
+      {
+        "success": true,
+        "message": "密码修改成功"
+      }
+      ```
+  - 失败:
+    - 状态码: 400
+    - 响应体:
+      ```json
+      {
+        "error": "缺少必要信息",
+        "details": {
+          "oldPassword": "旧密码是必填项",
+          "newPassword": "新密码是必填项"
+        }
+      }
+      ```
+    - 状态码: 401
+    - 响应体:
+      ```json
+      {
+        "error": "旧密码不正确"
+      }
+      ```
+    - 状态码: 500
+    - 响应体:
+      ```json
+      {
+        "error": "修改密码失败，请稍后重试"
+      }
+      ```
 
-**响应示例：**
 
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "testuser",
-    "email": "test@example.com",
-    "createdAt": "2024-11-11T10:00:00.000Z",
-    "updatedAt": "2024-11-11T10:00:00.000Z"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIs..." // JWT token
-}
-```
-
-### 2. 用户登录
-
-**请求方法：** POST
-
-**URL：** `/auth/login`
-
-**请求参数：**
-
-```json
-{
-  "username": "string",     // 用户名，必填
-  "password": "string"      // 密码，必填
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "testuser",
-    "email": "test@example.com",
-    "createdAt": "2024-11-11T10:00:00.000Z",
-    "updatedAt": "2024-11-11T10:00:00.000Z"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIs..." // JWT token
-}
-```
 
 ## 任务管理接口
 

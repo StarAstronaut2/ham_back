@@ -46,14 +46,43 @@ router.get('/:id', async (req, res) => {
 
 // 创建新任务
 router.post('/', async (req, res) => {
+    const { content, deadline, priority } = req.body;
+
+    // 输入验证
+    if (!content || !deadline || priority === undefined) {
+        return res.status(400).json({ error: '任务内容、截止日期和优先级为必填项' });
+    }
+
+    if (typeof priority !== 'number' || priority < 1 || priority > 5) {
+        return res.status(400).json({ error: '优先级必须在1到5之间的数字' });
+    }
+
     try {
+        // 创建任务
         const task = await Task.create({
-            ...req.body,
+            content,
+            deadline,
+            priority,
             userId: req.user.id
         });
+
+        // 记录创建任务的日志
         await createLog('创建', task.id, `任务内容: ${task.content}`);
-        res.status(201).json(task);
+
+        // 返回任务信息
+        res.status(201).json({
+            message: '任务创建成功',
+            task: {
+                id: task.id,
+                content: task.content,
+                deadline: task.deadline,
+                priority: task.priority,
+                finish: task.finish,
+                userId: task.userId
+            }
+        });
     } catch (error) {
+        console.error('创建任务失败:', error);
         res.status(500).json({ error: '创建任务失败' });
     }
 });

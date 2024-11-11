@@ -16,5 +16,6 @@ app.use((req, res, next) => {
 });
 // 使用任务路由
 app.use('/tasks', tasksRouter);
-
+const authRouter = require('./routes/auth');
+app.use('/auth', authRouter);
 module.exports = app;

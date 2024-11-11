@@ -1,7 +1,7 @@
 // models/Task.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database'); // 确保导入的是 { sequelize }
-
+const User = require('./User');
 const Task = sequelize.define('Task', {
     content: {
         type: DataTypes.STRING,
@@ -19,14 +19,7 @@ const Task = sequelize.define('Task', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: User,
-          key: 'id'
-        }
-    },
+
 });
 Task.belongsTo(User);
 User.hasMany(Task);

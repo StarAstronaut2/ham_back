@@ -3,7 +3,8 @@ const app = require('./app');
 const { sequelize, createDatabaseIfNotExists } = require('./config/database');
 const Task = require('./models/Task');
 const Log = require('./models/Log'); // 确保导入 Log 模型
-
+// 导入模型
+const User = require('./models/User');
 // 端口设置
 const PORT = process.env.PORT || 3000;
 
