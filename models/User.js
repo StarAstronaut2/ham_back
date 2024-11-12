@@ -40,6 +40,11 @@ const User = sequelize.define('User', {
         msg: '请输入有效的电子邮箱地址'
       }
     }
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false, // 默认值为false，表示普通用户
   }
 }, {
   hooks: {

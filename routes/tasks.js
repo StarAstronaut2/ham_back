@@ -53,8 +53,8 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: '任务内容、截止日期和优先级为必填项' });
     }
 
-    if (typeof priority !== 'number' || priority < 1 || priority > 5) {
-        return res.status(400).json({ error: '优先级必须在1到5之间的数字' });
+    if (typeof priority !== 'number' || priority < 0 || priority > 3) {
+        return res.status(400).json({ error: '优先级必须为0、1、2之一' });
     }
 
     try {
@@ -62,6 +62,7 @@ router.post('/', async (req, res) => {
         const task = await Task.create({
             content,
             deadline,
+            finish,
             priority,
             userId: req.user.id
         });
