@@ -2,7 +2,7 @@ var express = require('express');
 
 const bodyParser = require('body-parser');
 const tasksRouter = require('./routes/tasks');
-
+const scheduleRouter = require('./routes/schedule');
 
 
 const app = express();
@@ -18,4 +18,5 @@ app.use((req, res, next) => {
 app.use('/tasks', tasksRouter);
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
+app.use('/schedule', scheduleRouter);
 module.exports = app;

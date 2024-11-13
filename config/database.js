@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
 
 // 数据库配置
-const dbName = 'task_manager';
+const dbName = 'HamSystem';
 const dbUser = 'root';
 const dbPassword = '123456';
 const dbHost = 'localhost';
