@@ -46,7 +46,7 @@ router.get('/:id', async (req, res) => {
 
 // 创建新任务
 router.post('/', async (req, res) => {
-    const { content, deadline, priority } = req.body;
+    const { content, deadline, priority, finish } = req.body;
 
     // 输入验证
     if (!content || !deadline || priority === undefined) {
@@ -56,7 +56,10 @@ router.post('/', async (req, res) => {
     if (typeof priority !== 'number' || priority < 0 || priority > 3) {
         return res.status(400).json({ error: '优先级必须为0、1、2之一' });
     }
-
+    const currentDate = new Date();
+    if (new Date(deadline) < currentDate) {
+        return res.status(400).json({ error: '截止日期不能早于当前日期' });
+    }
     try {
         // 创建任务
         const task = await Task.create({
@@ -97,6 +100,10 @@ router.put('/:id', async (req, res) => {
                 userId: req.user.id
             }
         });
+        // 检查新截止日期是否早于当前日期
+        if (req.body.deadline && new Date(req.body.deadline) < new Date()) {
+            return res.status(400).json({ error: '截止日期不能早于当前日期' });
+        }
         if (task) {
             await task.update(req.body);
             await createLog('更新', task.id, `更新后内容: ${task.content}`);
