@@ -13,16 +13,17 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cookie-parser": "~1.4.4",
+    "csv-writer": "^1.6.0",
     "debug": "~2.6.9",
     "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
     "express": "~4.16.1",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "mysql2": "^3.11.3",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7"
   },
-
-    "bin": "server.js"
-
+  "bin": "server.js"
 }
