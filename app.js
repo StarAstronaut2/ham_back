@@ -3,6 +3,7 @@ var express = require('express');
 const bodyParser = require('body-parser');
 const tasksRouter = require('./routes/tasks');
 const scheduleRouter = require('./routes/schedule');
+const logRouter = require('./routes/schedule');
 
 // 导入模型关联配置（这一步很重要）
 require('./models');  // 这会执行 models/index.js 中的关联设置
@@ -20,4 +21,5 @@ app.use('/tasks', tasksRouter);
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
 app.use('/schedule', scheduleRouter);
+app.use('./log', logRouter);
 module.exports = app;

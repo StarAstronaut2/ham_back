@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server.js",
+    "start:mysql": "set STORAGE_MODE=mysql&& node server.js",
+    "start:sqlite": "set STORAGE_MODE=sqlite&& node server.js",
+    "export-data": "node scripts/exportToSqlite.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,6 +19,10 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "mysql2": "^3.11.3",
-    "sequelize": "^6.37.5"
-  }
+    "sequelize": "^6.37.5",
+    "sqlite3": "^5.1.7"
+  },
+
+    "bin": "server.js"
+
 }

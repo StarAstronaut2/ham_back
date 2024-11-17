@@ -4,20 +4,10 @@ const router = express.Router();
 const Task = require('../models/Task');
 const Log = require('../models/Log'); // 导入日志模型
 const { auth } = require('../middleware/auth');
-// 将 auth 中间件添加到所有路由
+const loggingMiddleware = require('../middleware/loggingMiddleware');
+router.use(loggingMiddleware);
 router.use(auth);
-// 辅助函数：记录日志
-async function createLog(action, taskId = null, content = null) {
-    try {
-        await Log.create({
-            action,
-            taskId,
-            content,
-        });
-    } catch (error) {
-        console.error('记录日志失败:', error);
-    }
-}
+
 // 获取当前用户的所有任务
 router.get('/', async (req, res) => {
     try {
@@ -71,8 +61,9 @@ router.post('/', async (req, res) => {
         });
 
         // 记录创建任务的日志
-        await createLog('创建', task.id, `任务内容: ${task.content}`);
-
+        // await logger.logTaskAction('CREATE_TASK', task.id, req.user.id, {
+        //     taskContent: task.content
+        // });
         // 返回任务信息
         res.status(201).json({
             message: '任务创建成功',
@@ -86,6 +77,7 @@ router.post('/', async (req, res) => {
             }
         });
     } catch (error) {
+        await logger.logError(error, req.user.id);
         console.error('创建任务失败:', error);
         res.status(500).json({ error: '创建任务失败' });
     }
@@ -106,9 +98,12 @@ router.put('/:id', async (req, res) => {
         }
         if (task) {
             await task.update(req.body);
-            await createLog('更新', task.id, `更新后内容: ${task.content}`);
+            // await logger.logTaskAction('UPDATE_TASK', task.id, req.user.id, {
+            //     updates: req.body
+            // });
             res.json(task);
         } else {
+            await logger.logError(error, req.user.id, req.params.taskId);
             res.status(404).json({ error: '任务未找到' });
         }
     } catch (error) {
@@ -122,7 +117,7 @@ router.delete('/', async (req, res) => {
         await Task.destroy({
             where: { userId: req.user.id }
         });
-        await createLog('删除所有任务');
+        // await createLog('删除所有任务');
         res.json({ message: '所有任务已删除' });
     } catch (error) {
         res.status(500).json({ error: '删除所有任务失败' });
@@ -141,7 +136,7 @@ router.delete('/:id', async (req, res) => {
         });
         if (task) {
             await task.destroy();
-            await createLog('删除', task.id, `已删除内容: ${task.content}`);
+            // await createLog('删除', task.id, `已删除内容: ${task.content}`);
             res.json({ message: '任务已删除' });
         } else {
             res.status(404).json({ error: '任务未找到' });

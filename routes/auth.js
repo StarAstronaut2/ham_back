@@ -4,7 +4,8 @@ const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../middleware/auth');
-
+const loggingMiddleware = require('../middleware/loggingMiddleware');
+router.use(loggingMiddleware);
 //注册
 router.post('/register', async (req, res) => {
   try {

@@ -5,7 +5,8 @@ const { Course, CourseSchedule, StudentCourse } = require('../models');
 const { auth } = require('../middleware/auth');
 const { Op, literal } = require('sequelize');  // Added literal import
 const { sequelize } = require('../models');
-
+const loggingMiddleware = require('../middleware/loggingMiddleware');
+router.use(loggingMiddleware);
 // 辅助函数：获取当前教学周
 function getCurrentWeek() {
     // 这里需要根据实际的学期开始时间计算当前教学周
