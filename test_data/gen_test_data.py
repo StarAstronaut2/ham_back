@@ -243,7 +243,7 @@ class DataGenerator:
         sql.append("")
 
         # 插入用户数据
-        sql.append("INSERT INTO Users (id, username, password, email, isAdmin, createdAt, updatedAt) VALUES")
+        sql.append("INSERT IGNORE INTO Users (id, username, password, email, isAdmin, createdAt, updatedAt) VALUES")
         user_values = []
         for user in users:
             user_values.append(
@@ -254,7 +254,7 @@ class DataGenerator:
         sql.append("")
 
         # 插入课程数据
-        sql.append("INSERT INTO Courses (courseId, name, credit, instructor, department, description, "
+        sql.append("INSERT IGNORE INTO Courses (courseId, name, credit, instructor, department, description, "
                   "capacity, enrolled, academicYear, semester, createdAt, updatedAt) VALUES")
         course_values = []
         for course in courses:
@@ -268,7 +268,7 @@ class DataGenerator:
         sql.append("")
 
         # 插入课程安排数据
-        sql.append("INSERT INTO CourseSchedules (courseId, dayOfWeek, startSlot, endSlot, classroom, "
+        sql.append("INSERT IGNORE INTO CourseSchedules (courseId, dayOfWeek, startSlot, endSlot, classroom, "
                   "weekStart, weekEnd, weekType, createdAt, updatedAt) VALUES")
         schedule_values = []
         for schedule in schedules:
@@ -281,7 +281,7 @@ class DataGenerator:
         sql.append("")
 
         # 插入选课数据
-        sql.append("INSERT INTO StudentCourses (studentId, courseId, status, selectTime, "
+        sql.append("INSERT IGNORE INTO StudentCourses (studentId, courseId, status, selectTime, "
                   "createdAt, updatedAt) VALUES")
         student_course_values = []
         for sc in student_courses:

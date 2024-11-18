@@ -3,6 +3,8 @@ const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
 const path = require('path');
 const fs = require('fs');
+const { log } = require('console');
+require('dotenv').config();
 
 // 数据库配置
 const config = {
@@ -36,8 +38,9 @@ const config = {
 
 // 获取存储模式，默认使用 SQLite
 const STORAGE_MODE = process.env.STORAGE_MODE || 'sqlite';
+console.log(process.env.STORAGE_MODE)
 
-// 创建 Sequelize 实例的函数
+console.log(STORAGE_MODE)// 创建 Sequelize 实例的函数
 function createSequelizeInstance() {
     if (STORAGE_MODE === 'mysql') {
         return new Sequelize(
